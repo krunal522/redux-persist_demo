@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import styles from './style';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
@@ -9,15 +9,16 @@ import colors from '../../utils/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkMark } from '../../Redux/action/action';
-
+// import Loader from '../skeletonLoader/Loader';
 import { userApi } from '../utils/index';
+
 
 
 // create a component
 const Checktodolist = (props) => {
     const [todoSelect, setTodoSelect] = useState([]);
     const [time, setTime] = useState();
-
+    const [loading, setLoading] = useState(true);
     const [currentDate, setCurrentDate] = useState('');
 
     console.log('current dataaa=>>>', currentDate)
@@ -145,6 +146,17 @@ const Checktodolist = (props) => {
     };
 
 
+    const Loading = () => {
+        return (
+            <View style={{
+                alignItems: 'center',
+                justifyContent: "center",
+                flex: 1
+            }}>
+                <ActivityIndicator size="large" color="#163e58" />
+            </View>
+        );
+    }
 
     const dispatch = useDispatch()
     const [userData, setUserData] = useState([]);
@@ -170,16 +182,16 @@ const Checktodolist = (props) => {
 
     const userDetails = async () => {
         try {
+            setLoading(true); // 👈 API call start hone se pehle loading true
             const data = await userApi();
-            console.log('api dataaa=>>>', JSON.stringify(data))
-            // console.log('current user dataa list details=>>>!!!', (JSON.stringify(data.data)))
-            setUserData(data?.data)
-
+            console.log('API Data:', JSON.stringify(data));
+            setUserData(data?.data);
         } catch (error) {
-            console.log('data tododdd=>>>', error.message)
+            console.log('API Error:', error.message);
+        } finally {
+            setLoading(false); // 👈 API response milne ke baad loading false
         }
-    }
-
+    };
     const userProfile = [
         {
             id: 0,
@@ -302,8 +314,16 @@ const Checktodolist = (props) => {
 
     return (
         <View style={styles.container}>
+            
             {/* <Viewprofile mainTitle='Selected Explore' /> */}
-            {
+            {loading ? (<View style={{
+                alignItems: 'center',
+                justifyContent: "center",
+                flex: 1
+            }}>
+                <ActivityIndicator size="large" color="#007AFF" />
+            </View>) :
+
                 userData.length > 0 ? userData.map((value, index) => {
                     return (
                         <View key={index} style={styles.mainContainer}>

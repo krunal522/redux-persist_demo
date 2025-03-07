@@ -9,7 +9,15 @@ const styles = StyleSheet.create({
     mainProfile: {
         flexDirection: 'row'
     },
- 
+    notFound: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: 'white',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        marginTop: 30
+    },
+
     userTitle: {
         marginLeft: 8,
         fontWeight: '600',
@@ -52,7 +60,7 @@ const styles = StyleSheet.create({
         borderColor: '#CBCFE1',
         borderWidth: 2
     },
-   
+
     userProfile: {
         marginLeft: 16,
         marginVertical: 10,

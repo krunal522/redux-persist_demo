@@ -1,25 +1,39 @@
 //import liraries
-import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { Component, useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ToastAndroid } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import colors from '../../utils/colors';
+import { List, IconButton } from 'react-native-paper';
 import fontFamily from '../../utils/fontFamily';
 import Viewprofile from '../userProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import { deleteTodo } from '../../Redux/action/action';
 // create a component
-const Viewtodo = () => {
+const Viewtodo = ({ navigation }) => {
     const [todolist, setTodosList] = useState([]);
     const [time, setTime] = useState();
     const isFocused = useIsFocused();
     console.log('result dataaa=>>>', todolist)
 
+
+    const swipeListRef = useRef(null);
+
+    const dispatch = useDispatch();
+
     const findTodoItems = async () => {
         const result = await AsyncStorage.getItem('todos');
         if (result !== null) setTodosList(JSON.parse(result));
-
     };
+
+    const toast = (msg) => {
+        ToastAndroid.showWithGravity(
+            msg,
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER
+        );
+    }
 
     useEffect(() => {
         getTime()
@@ -63,6 +77,71 @@ const Viewtodo = () => {
 
     console.log('todoData=>>>>!!!!!', JSON.stringify(todoData))
 
+    const renderItem = ({ item }) => {
+
+        console.log('iteeeee', item)
+        return (
+            <View style={styles.userContainer}>
+
+                <View style={styles.mainUserDetails}>
+
+
+                    <Text style={styles.insertUser}>{item.title}</Text>
+                    <View style={{ position: 'absolute', flexDirection: 'row', alignSelf: 'flex-end' }}>
+                        <Text style={styles.timeTxt}>{item.time}</Text>
+                    </View>
+                    <Text style={styles.descriptionUser}>{item.desc}</Text>
+
+                </View>
+
+            </View>
+        )
+
+
+    }
+
+    const deleteItem = (item) => {
+        if (swipeListRef.current) {
+            swipeListRef.current.closeAllOpenRows();
+        }
+        dispatch(deleteTodo(item));
+        toast('Todo deleted successfully!');
+    };
+
+    const editItem = (todoId) => {
+        if (swipeListRef.current) {
+            swipeListRef.current.closeAllOpenRows();
+        }
+        const selectedTodo = todoData.find(t => t.id.toString() === todoId);
+        if (selectedTodo) {
+            navigation.navigate('Addtodo', { todo: selectedTodo });
+        }
+    };
+
+
+    const renderHiddenItem = ({ item }) => {
+        console.log('RenderHiddenItem called with:', item); // Debugging
+        return (
+            <View style={styles.hiddenContainer}>
+                <IconButton
+                    icon="trash-can-outline"
+                    iconColor="#c93c3c"
+                    size={28}
+                    onPress={() => deleteItem(item.id.toString())}  // Ensure item.id is passed
+                    style={[styles.iconButtonDelete]}
+                />
+                <IconButton
+                    icon="square-edit-outline"  // Professional edit icon
+                    iconColor="#4a90e2"
+                    size={30}
+                    onPress={() => editItem(item.id.toString())}
+                    style={[styles.iconButtonEdit]}
+                />
+            </View>
+        );
+    };
+
+
 
     useEffect(() => {
         findTodoItems();
@@ -71,35 +150,63 @@ const Viewtodo = () => {
     return (
 
         <View style={styles.container}>
+
             <Viewprofile mainTitle='Todo’s' />
             <ScrollView>
 
                 <View style={styles.mainContainer}>
+
                     {
                         todoData?.length === 0 ? (<View><Text style={styles.notFound}>Not Data Found </Text></View>) : ''
                     }
-                    {
-                        todoData.map((value, index) => {
-                            return (
-                                <View key={index} style={styles.userContainer}>
-                                    <View style={styles.mainUserDetails}>
-                                        <Text style={styles.insertUser}>{value.title}</Text>
-                                        <View style={{ position: 'absolute', flexDirection: 'row', alignSelf: 'flex-end', }}>
-                                            <Text style={styles.timeTxt}>{time}</Text>
-                                        </View>
-                                        <Text style={styles.descriptionUser}>{value.desc}</Text>
 
+
+                    <SwipeListView
+                        keyExtractor={(item, index) => item.id.toString()}
+                        ref={swipeListRef}
+                        data={todoData}
+                        renderItem={renderItem}
+                        renderHiddenItem={renderHiddenItem}
+                        leftOpenValue={100}
+                        scrollEnabled={true}
+                        disableLeftSwipe={true}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    />
+
+
+
+
+
+                    {/* <SwipeListView
+                        data={todoData}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <View style={styles.userContainer}>
+                                <View style={styles.mainUserDetails}>
+                                    <Text style={styles.insertUser}>{item.title}</Text>
+                                    <View style={{ position: 'absolute', flexDirection: 'row', alignSelf: 'flex-end' }}>
+                                        <Text style={styles.timeTxt}>{item.time}</Text>
                                     </View>
-
+                                    <Text style={styles.descriptionUser}>{item.desc}</Text>
                                 </View>
-                            )
-
-                        })
-                    }
+                            </View>
+                        )}
+                        renderHiddenItem={({ item }) => (
+                            <View style={styles.hiddenItem}>
+                                <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteBtn}>
+                                    <Text style={styles.deleteText}>Delete</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        rightOpenValue={-75} // Right swipe limit
+                        disableRightSwipe={true} // Left swipe disable
+                    /> */}
 
                 </View>
+
             </ScrollView>
-        </View>
+        </View >
 
 
     );
@@ -113,12 +220,32 @@ const styles = StyleSheet.create({
         display: 'flex'
     },
     userContainer: {
+        backgroundColor: colors.backgroundColor,
         width: '92%',
         alignSelf: 'center',
         marginBottom: 20,
         borderRadius: 8,
         borderWidth: 1,
         borderColor: '#CBCFE1'
+    },
+    hiddenContainer: {
+        flexDirection: "row",  // Ensure buttons are side by side
+        backgroundColor: colors.backgroundColor,
+        // paddingHorizontal: 15,
+        width: '33%',
+        justifyContent: 'center',
+        // height: 65,
+        alignSelf: 'flex-start',
+        marginBottom: 20,
+        borderRadius: 8,
+        // borderWidth: 1,
+        borderColor: '#CBCFE1' // Ensure enough space for both buttons
+    },
+    iconButtonDelete: {
+        marginRight: 0,
+    },
+    iconButtonEdit: {
+        marginRight: 30,
     },
     mainContainer: {
         marginTop: 30,
@@ -163,7 +290,7 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         fontFamily: fontFamily.regular,
         color: colors.white,
-    }
+    },
 });
 
 export default Viewtodo;
