@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkMark } from '../../Redux/action/action';
 // import Loader from '../skeletonLoader/Loader';
 import { userApi } from '../utils/index';
+import { Loader } from '../skeletonLoader/Loader';
 
 
 
