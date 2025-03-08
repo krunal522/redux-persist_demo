@@ -1,8 +1,8 @@
 //import liraries
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, ToastAndroid, Keyboard } from 'react-native';
 import colors from '../../utils/colors';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import fontFamily from '../../utils/fontFamily';
 import Button from '../button';
 import Viewprofile from '../userProfile';
@@ -18,6 +18,8 @@ const Addtodo = ({ route }) => {
     const [title, setTitle] = useState(existingTodo ? existingTodo.title : '');
     const [desc, setDesc] = useState(existingTodo ? existingTodo.desc : '');
 
+
+
     const navigation = useNavigation();
 
     const [todoitem, setTodos] = useState([])
@@ -29,23 +31,36 @@ const Addtodo = ({ route }) => {
     console.log('new id=>>>>', existingTodo);
 
     const dispatch = useDispatch()
+   
+   
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                navigation.setParams({ todo: null });
+            };
+        }, [navigation])
+    );
+
+
 
 
     const handleOnChangeText = (text, valueFor) => {
         if (valueFor === 'title') setTitle(text);
         if (valueFor === 'desc') setDesc(text);
     };
-
     useEffect(() => {
         if (existingTodo) {
             setTitle(existingTodo.title);
             setDesc(existingTodo.desc);
+        } else {
+            setTitle('');
+            setDesc('');
         }
-
     }, [existingTodo]);
     useEffect(() => {
         console.log('Todo Data Updated newwwwwwww=>>>>>>:', todoData); // Debugging
     }, [todoData]);
+    ;
 
     const toast = (msg) => {
         ToastAndroid.showWithGravity(
@@ -116,7 +131,7 @@ const Addtodo = ({ route }) => {
     return (
         <View style={styles.container}>
             <ScrollView>
-                <Viewprofile mainTitle='Add Todo’s' />
+                <Viewprofile mainTitle={existingTodo !== undefined && existingTodo !== null ? 'Update Todo' : 'Add Todo’s'} />
 
                 <View style={styles.mainContainer}>
                     <View>

@@ -105,6 +105,10 @@ const Viewtodo = ({ navigation }) => {
             swipeListRef.current.closeAllOpenRows();
         }
         dispatch(deleteTodo(item));
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Viewtodo' }]
+        });
         toast('Todo deleted successfully!');
     };
 
@@ -112,12 +116,18 @@ const Viewtodo = ({ navigation }) => {
         if (swipeListRef.current) {
             swipeListRef.current.closeAllOpenRows();
         }
+        navigation.setParams({ todo: null });
         const selectedTodo = todoData.find(t => t.id.toString() === todoId);
         if (selectedTodo) {
-            navigation.navigate('Addtodo', { todo: selectedTodo });
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Addtodo', params: { todo: selectedTodo } }],
+            });
         }
     };
 
+
+    
 
     const renderHiddenItem = ({ item }) => {
         console.log('RenderHiddenItem called with:', item); // Debugging
@@ -141,7 +151,24 @@ const Viewtodo = ({ navigation }) => {
         );
     };
 
+    // const handleRowOpen = () => {
+    //     const interval = setInterval(() => {
+    //         if (swipeListRef.current) {
+    //             swipeListRef.current.closeAllOpenRows();
+    //             console.log("Closed all open rows...");
+    //             clearInterval(interval); // Stop interval after one execution
+    //         }
+    //     }, 1500);
+    // };
 
+    const handleRowOpen = () => {
+        setTimeout(() => {
+            if (swipeListRef.current) {
+                swipeListRef.current.closeAllOpenRows();
+                console.log("Closed all open rows...");
+            }
+        }, 1500);
+    };
 
     useEffect(() => {
         findTodoItems();
@@ -171,6 +198,7 @@ const Viewtodo = ({ navigation }) => {
                         scrollEnabled={true}
                         disableLeftSwipe={true}
                         showsVerticalScrollIndicator={false}
+                        onRowOpen={handleRowOpen}
                         keyboardShouldPersistTaps="handled"
                     />
 
@@ -241,11 +269,12 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         borderColor: '#CBCFE1' // Ensure enough space for both buttons
     },
-    iconButtonDelete: {
-        marginRight: 0,
-    },
+    // iconButtonDelete: {
+    //     marginRight: -5,
+    // },
     iconButtonEdit: {
-        marginRight: 30,
+        right: 14
+
     },
     mainContainer: {
         marginTop: 30,
