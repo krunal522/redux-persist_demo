@@ -1,14 +1,18 @@
 //import liraries
 import React, { Component, useState, useEffect, useCallback } from 'react';
+import React, { Component, useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, ToastAndroid, Keyboard } from 'react-native';
 import colors from '../../utils/colors';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import fontFamily from '../../utils/fontFamily';
 import Button from '../button';
 import Viewprofile from '../userProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TodoCheck } from '../../Redux/reducer/Reducer';
+import { addTodo, updateTodo } from '../../Redux/action/action';
 import { addTodo, updateTodo } from '../../Redux/action/action';
 
 
@@ -19,10 +23,22 @@ const Addtodo = ({ route }) => {
     const [desc, setDesc] = useState(existingTodo ? existingTodo.desc : '');
 
 
+const Addtodo = ({ route }) => {
+    const [title, setTitle] = useState(existingTodo ? existingTodo.title : '');
+    const [desc, setDesc] = useState(existingTodo ? existingTodo.desc : '');
 
+
+
+    const navigation = useNavigation();
     const navigation = useNavigation();
 
     const [todoitem, setTodos] = useState([])
+
+    const existingTodo = route.params?.todo || null;
+
+    const todoData = useSelector(state => state.TodoCheck.todoData)
+
+    console.log('new id=>>>>', existingTodo);
 
     const existingTodo = route.params?.todo || null;
 
@@ -42,12 +58,37 @@ const Addtodo = ({ route }) => {
     );
 
 
+   
+   
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                navigation.setParams({ todo: null });
+            };
+        }, [navigation])
+    );
+
+
 
 
     const handleOnChangeText = (text, valueFor) => {
         if (valueFor === 'title') setTitle(text);
+        if (valueFor === 'title') setTitle(text);
         if (valueFor === 'desc') setDesc(text);
     };
+    useEffect(() => {
+        if (existingTodo) {
+            setTitle(existingTodo.title);
+            setDesc(existingTodo.desc);
+        } else {
+            setTitle('');
+            setDesc('');
+        }
+    }, [existingTodo]);
+    useEffect(() => {
+        console.log('Todo Data Updated newwwwwwww=>>>>>>:', todoData); // Debugging
+    }, [todoData]);
+    ;
     useEffect(() => {
         if (existingTodo) {
             setTitle(existingTodo.title);
@@ -88,11 +129,51 @@ const Addtodo = ({ route }) => {
 
         return `${hour}:${minutes}:${seconds} ${TimeType}`;
     };
+    const getCurrentTime = () => {
+        let date = new Date();
+        let hour = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+        let TimeType = hour < 12 ? 'AM' : 'PM';
+
+        if (hour > 12) {
+            hour -= 12;
+        }
+        if (hour === 0) {
+            hour = 12;
+        }
+
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        return `${hour}:${minutes}:${seconds} ${TimeType}`;
+    };
 
 
     const submitTodo = async () => {
         let updatedTodos;
+        let updatedTodos;
         if (!title.length || !desc.length) {
+            toast('Title and Description Required');
+        } else if (existingTodo) {
+
+            const updatedTodo = { ...existingTodo, title: title.toString(), desc: desc.toString() };
+
+            console.log('new updated valueeee->>>', updatedTodo);
+
+            dispatch(updateTodo(updatedTodo));
+            // updatedTodos = todoData.map(t =>
+            //     t.id === existingTodo.id ? { ...t, title, desc } : t
+            // );
+            toast('Todo Updated Successfully');
+            setTitle('');
+            setDesc('');
+
+            // await AsyncStorage.setItem('todoData', JSON.stringify(updatedTodos));
+            navigation.setParams({ todo: null });
+            // navigation.goBack(); // Navigate back to Todo List
+            navigation.navigate('Viewtodo');
+
             toast('Title and Description Required');
         } else if (existingTodo) {
 
@@ -134,6 +215,7 @@ const Addtodo = ({ route }) => {
         <View style={styles.container}>
             <ScrollView>
                 <Viewprofile mainTitle={existingTodo !== undefined && existingTodo !== null ? 'Update Todo' : 'Add Todo’s'} />
+                <Viewprofile mainTitle={existingTodo !== undefined && existingTodo !== null ? 'Update Todo' : 'Add Todo’s'} />
 
                 <View style={styles.mainContainer}>
                     <View>
@@ -170,6 +252,7 @@ const Addtodo = ({ route }) => {
                         </View>
                     </View>
                     <View>
+                        <Button onPress={submitTodo} title={existingTodo !== undefined && existingTodo !== null ? 'UPDATE' : 'ADD'} />
                         <Button onPress={submitTodo} title={existingTodo !== undefined && existingTodo !== null ? 'UPDATE' : 'ADD'} />
                     </View>
                 </View>

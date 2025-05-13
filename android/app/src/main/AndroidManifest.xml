@@ -5,6 +5,10 @@
       android:name=".MainApplication"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8886f0d65ea8adfde8769046e416cf9d62150534
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <activity

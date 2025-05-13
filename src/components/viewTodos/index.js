@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ToastAndroid } fr
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import colors from '../../utils/colors';
+<<<<<<< HEAD
 import { IconButton } from 'react-native-paper';
 import fontFamily from '../../utils/fontFamily';
 import Viewprofile from '../userProfile';
@@ -11,6 +12,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { deleteTodo } from '../../Redux/action/action';
 
+=======
+import { List, IconButton } from 'react-native-paper';
+import fontFamily from '../../utils/fontFamily';
+import Viewprofile from '../userProfile';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import { deleteTodo } from '../../Redux/action/action';
+>>>>>>> 8886f0d65ea8adfde8769046e416cf9d62150534
 // create a component
 const Viewtodo = ({ navigation }) => {
     const [todolist, setTodosList] = useState([]);
@@ -196,7 +206,11 @@ const Viewtodo = ({ navigation }) => {
                         renderItem={renderItem}
                         renderHiddenItem={renderHiddenItem}
                         leftOpenValue={100}
+<<<<<<< HEAD
                         scrollEnabled={false}
+=======
+                        scrollEnabled={true}
+>>>>>>> 8886f0d65ea8adfde8769046e416cf9d62150534
                         disableLeftSwipe={true}
                         showsVerticalScrollIndicator={false}
                         onRowOpen={handleRowOpen}
