@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     },
     mainHeaderContainer: {
         marginTop: 36,
-        marginHorizontal: 24,
+        // marginHorizontal: 24,
         width: '88%',
         alignSelf: 'center'
     },
@@ -114,16 +114,17 @@ const styles = StyleSheet.create({
         color: colors.green,
     },
     exploreLine: {
-        width: '1.5%',
+        width: 5,
         height: 30,
+        // marginLeft: 24,
         backgroundColor: '#51C833',
         borderRadius: 5
     },
     lineMainContainer: {
         display: 'flex',
-        width: '90%',
+        // width: '90%',
         flexDirection: 'row',
-        marginHorizontal: 10,
+        // marginHorizontal: 24,
     },
     exploreText: {
         fontWeight: '600',

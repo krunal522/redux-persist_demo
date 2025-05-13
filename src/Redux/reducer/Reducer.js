@@ -1,4 +1,4 @@
-import { ADD_TODO, CHECKED_DETAILS } from "../action/action";
+import { ADD_TODO, CHECKED_DETAILS, DELETE_TODO, UPDATE_TODO } from "../action/action";
 
 const initialState = {
     checkData: '',
