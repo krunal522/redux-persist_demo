@@ -1,34 +1,66 @@
 //import liraries
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, ToastAndroid, Keyboard } from 'react-native';
 import colors from '../../utils/colors';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import fontFamily from '../../utils/fontFamily';
 import Button from '../button';
 import Viewprofile from '../userProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TodoCheck } from '../../Redux/reducer/Reducer';
-import { addTodo } from '../../Redux/action/action';
-
+import { addTodo, updateTodo } from '../../Redux/action/action';
 
 
 
 // addtodo Component Screen Details
-const Addtodo = (props) => {
-    const [title, setTitle] = useState('');
-    const [desc, setDesc] = useState('');
+const Addtodo = ({ route }) => {
+    const [title, setTitle] = useState(existingTodo ? existingTodo.title : '');
+    const [desc, setDesc] = useState(existingTodo ? existingTodo.desc : '');
 
-    const instagram = 'www.instagram.com/'
+
+
+    const navigation = useNavigation();
 
     const [todoitem, setTodos] = useState([])
 
+    const existingTodo = route.params?.todo || null;
+
+    const todoData = useSelector(state => state.TodoCheck.todoData)
+
+    console.log('new id=>>>>', existingTodo);
+
     const dispatch = useDispatch()
+   
+   
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                navigation.setParams({ todo: null });
+            };
+        }, [navigation])
+    );
+
+
 
 
     const handleOnChangeText = (text, valueFor) => {
-        if (valueFor === 'title') setTitle(text + (`${instagram}`));
+        if (valueFor === 'title') setTitle(text);
         if (valueFor === 'desc') setDesc(text);
     };
+    useEffect(() => {
+        if (existingTodo) {
+            setTitle(existingTodo.title);
+            setDesc(existingTodo.desc);
+        } else {
+            setTitle('');
+            setDesc('');
+        }
+    }, [existingTodo]);
+    useEffect(() => {
+        console.log('Todo Data Updated newwwwwwww=>>>>>>:', todoData); // Debugging
+    }, [todoData]);
+    ;
 
     const toast = (msg) => {
         ToastAndroid.showWithGravity(
@@ -37,28 +69,71 @@ const Addtodo = (props) => {
             ToastAndroid.CENTER
         );
     }
+    const getCurrentTime = () => {
+        let date = new Date();
+        let hour = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+        let TimeType = hour < 12 ? 'AM' : 'PM';
 
+        if (hour > 12) {
+            hour -= 12;
+        }
+        if (hour === 0) {
+            hour = 12;
+        }
+
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        return `${hour}:${minutes}:${seconds} ${TimeType}`;
+    };
 
 
     const submitTodo = async () => {
+        let updatedTodos;
         if (!title.length || !desc.length) {
-            toast('Title and Description Required ')
-        } else {
-            const todo = { id: Math.random().toString(), title, desc, time: Date.now() };
+            toast('Title and Description Required');
+        } else if (existingTodo) {
 
-            // const updatedTodo = [...todoitem, todo];
-            // setTodos(updatedTodo);
-            dispatch(addTodo(todo))
-            toast('Todo Insert Sucessfully')
-            // await AsyncStorage.setItem('todos', JSON.stringify(updatedTodo));
-            setTitle('')
-            setDesc('')
+            const updatedTodo = { ...existingTodo, title: title.toString(), desc: desc.toString() };
+
+            console.log('new updated valueeee->>>', updatedTodo);
+
+            dispatch(updateTodo(updatedTodo));
+            // updatedTodos = todoData.map(t =>
+            //     t.id === existingTodo.id ? { ...t, title, desc } : t
+            // );
+            toast('Todo Updated Successfully');
+            setTitle('');
+            setDesc('');
+
+            // await AsyncStorage.setItem('todoData', JSON.stringify(updatedTodos));
+            navigation.setParams({ todo: null });
+            // navigation.goBack(); // Navigate back to Todo List
+            navigation.navigate('Viewtodo');
+
+        } else {
+            const todo = {
+                id: Math.random().toString(),
+                title,
+                desc,
+                time: getCurrentTime()
+            };
+
+            console.log('new todo!!=>>',todo)
+ 
+            dispatch(addTodo(todo));
+            toast('Todo added successfully!');
+
+            setTitle('');
+            setDesc('');
         }
     }
     return (
         <View style={styles.container}>
             <ScrollView>
-                <Viewprofile mainTitle='Add Todo’s' />
+                <Viewprofile mainTitle={existingTodo !== undefined && existingTodo !== null ? 'Update Todo' : 'Add Todo’s'} />
 
                 <View style={styles.mainContainer}>
                     <View>
@@ -95,13 +170,9 @@ const Addtodo = (props) => {
                         </View>
                     </View>
                     <View>
-                        <Button onPress={submitTodo} title='ADD' />
+                        <Button onPress={submitTodo} title={existingTodo !== undefined && existingTodo !== null ? 'UPDATE' : 'ADD'} />
                     </View>
-
-
                 </View>
-
-
             </ScrollView>
         </View>
     );

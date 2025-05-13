@@ -5,6 +5,7 @@ import Userprofile from '../../components/userProfile/index';
 import colors from '../../utils/colors';
 import Checktodolist from '../../components/checkTodoList/index';
 import styles from './style';
+import TestFigmaScreen from './TestFigmaScreen';
 
 // create a component
 const Todoscreen = (props) => {

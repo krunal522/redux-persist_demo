@@ -3,6 +3,13 @@ import React, { Component, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Switch } from 'react-native';
 import styles from './style';
 import LinearGradient from 'react-native-linear-gradient';
+// import LinearGradient from '../../assets/LinearGradient/Rectangle.svg';
+import userIconxml from '../../assets/svg/userIconXml';
+import CustomSvgIcon from '../CustomSvgIcon';
+
+
+
+
 // Viewprofile component Details Screen 
 const Viewprofile = (props) => {
     const {
@@ -87,31 +94,28 @@ const Viewprofile = (props) => {
                             </View>
                             {
                                 isEnabled ?
-                                    <LinearGradient
-                                        useAngle={true}
-                                        angle={180}
-                                        style={styles.mainPhoneContainer(isEnabled)}
-                                        start={{ x: 0, y: 0 }} end={{ x: 0, y: 0 }}
-                                        colors={['#43ff64d9', '#00d58e33']}>
-                                        {/* <Text style={{ padding: 20 }}></Text> */}
 
-                                        <View>
-
-                                            <Text style={styles.userTitle}>{value.userTitle}</Text>
-                                            <View style={{ marginVertical: 15, position: 'absolute', flexDirection: 'row', flex: 1, alignSelf: 'flex-end' }}>
-                                                <Switch
-                                                    trackColor={{ false: "#767577", true: "#51C833" }}
-                                                    onValueChange={toggleSwitch}
-                                                    value={isEnabled}
-                                                    thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
-                                                />
-                                            </View>
-                                            <Text style={styles.phoneNumberUser}>{value.userPhone}</Text>
-                                            <Text style={styles.userPrice}>{value.userPrice}</Text>
+                                    <View style={styles.gradient(isEnabled)}>
+                                        <View style={styles.linearGradient }>
+                                            <CustomSvgIcon xml={userIconxml} width={'100%'} height={116} style={{ position: 'absolute', }} />
+                                            {/* <Image source={require('../../assets/userProfile/design.png')} style={{ width: '100%', height: 116, position: 'absolute' }} /> */}
                                         </View>
-                                    </LinearGradient> :
+
+                                        <Text style={styles.userTitle}>{value.userTitle}</Text>
+                                        <View style={{ marginVertical: 15, position: 'absolute', flexDirection: 'row', flex: 1, alignSelf: 'flex-end' }}>
+                                            <Switch
+                                                trackColor={{ false: "#767577", true: "#51C833" }}
+                                                onValueChange={toggleSwitch}
+                                                value={isEnabled}
+                                                thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
+                                            />
+                                        </View>
+                                        <Text style={styles.phoneNumberUser}>{value.userPhone}</Text>
+
+                                        <Text style={styles.userPrice}>{value.userPrice}</Text>
+                                    </View>
+                                    :
                                     <View style={styles.mainPhoneContainer(isEnabled)}>
-                                        {/* <Image source={require('../../assets/userProfile/design.png')} style={{ width: '100%', height: 116, position: 'absolute' }} /> */}
                                         <Text style={styles.userTitle}>{value.userTitle}</Text>
                                         <View style={{ marginVertical: 15, position: 'absolute', flexDirection: 'row', flex: 1, alignSelf: 'flex-end' }}>
 
@@ -128,25 +132,6 @@ const Viewprofile = (props) => {
 
                                     </View>
                             }
-
-                            {/* <Text style={{ padding: 20 }}></Text> */}
-
-                            {/* <View style={styles.mainPhoneContainer(isEnabled)}>
-                                <Text style={styles.userTitle}>{value.userTitle}</Text>
-                                <View style={{ marginVertical: 15, position: 'absolute', flexDirection: 'row', flex: 1, alignSelf: 'flex-end' }}>
-
-                                    <Switch
-                                        trackColor={{ false: "#767577", true: "#51C833" }}
-                                        onValueChange={toggleSwitch}
-                                        value={isEnabled}
-                                        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-                                    />
-
-                                </View>
-                                <Text style={styles.phoneNumberUser}>{value.userPhone}</Text>
-                                <Text style={styles.userPrice}>{value.userPrice}</Text>
-                            </View> */}
-
                             <View style={styles.lineMainContainer}>
                                 <View style={styles.exploreLine}>
                                 </View>

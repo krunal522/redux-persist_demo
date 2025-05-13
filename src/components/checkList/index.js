@@ -21,7 +21,7 @@ const Checklist = (props) => {
 
     const checkTodoItems = async () => {
         const result = await AsyncStorage.getItem('checkTodo');
-        console.log('result dataaa=>>>', result)
+
         if (result !== null) setCheckUser(JSON.parse(result));
 
     };
@@ -126,6 +126,10 @@ const Checklist = (props) => {
         <View style={styles.container}>
             <Viewprofile mainTitle='Selected Explore' />
             <ScrollView>
+                {
+                    checkUser?.length === 0 ? (<View><Text style={styles.notFound}>Please select at least one item </Text></View>) : ''
+                }
+
                 {
                     checkUser.length > 0 ? checkUser.map((value, index) => {
                         return (

@@ -11,15 +11,21 @@ const styles = StyleSheet.create({
         backgroundColor: colors.backgroundColor
     },
     linearGradient: {
-        flex: 1,
+
+        // flex: 1,
+
         // paddingLeft: 15,
         // paddingRight: 15,
-        borderRadius: 5,
+        // backgroundColor: '#cbcfe133',
+        // borderRadius: 0,
+
+
+
     },
     mainHeaderContainer: {
         marginTop: 36,
-        // marginHorizontal: 24,,
-        width: '92%',
+        marginHorizontal: 24,
+        width: '88%',
         alignSelf: 'center'
     },
     titleHeader: {
@@ -31,7 +37,6 @@ const styles = StyleSheet.create({
     },
     userProfile: {
         marginTop: 30,
-
     },
     dateColor: {
         fontSize: 18,
@@ -71,7 +76,13 @@ const styles = StyleSheet.create({
         marginVertical: 35,
         width: '100%',
         backgroundColor: '#cbcfe133',
-        borderRadius: 10,
+        borderRadius: isEnabled ? 0 : 10,
+    }),
+
+    gradient: () => ({
+        height: 116,
+        marginVertical: 35,
+        width: '100%',
     }),
     userTitle: {
         marginTop: 16,

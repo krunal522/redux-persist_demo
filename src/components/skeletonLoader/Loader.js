@@ -1,8 +1,39 @@
-/** post Component  page Style  */
-
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import colors from '../../utils/colors';
 import fontFamily from '../../utils/fontFamily';
+import { View, Text } from 'react-native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+
+const SkeletonLoader = () => {
+    return (
+        <SkeletonPlaceholder >
+            <View style={styles.mainContainer}>
+                {/* Profile Row */}
+                <View style={styles.mainProfile}>
+                    <View style={styles.userProfile} />
+
+                    <View style={{ marginLeft: 10 }}>
+                        <View style={styles.userTitle} />
+                        <View style={styles.userEmail} />
+                    </View>
+                </View>
+
+                {/* Description */}
+                <View style={styles.description}>
+                    <View style={styles.texComments} />
+                </View>
+
+                {/* Watch Section */}
+                <View style={styles.watchMain}>
+                    <View style={styles.watchIcon} />
+                    <View style={styles.mainDateText} />
+                </View>
+            </View>
+        </SkeletonPlaceholder>
+    );
+};
+
 
 const styles = StyleSheet.create({
     mainContainer: {
@@ -87,6 +118,4 @@ const styles = StyleSheet.create({
         backgroundColor: colors.backgroundColor
     }
 });
-export default styles;
-
-
+export default SkeletonLoader;
